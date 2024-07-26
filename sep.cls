@@ -7,7 +7,20 @@
 % UTF-8 encoding and Polish language support
 \RequirePackage[utf8]{inputenc}
 \RequirePackage[T1]{fontenc}
-\RequirePackage[polish]{babel}
+\RequirePackage[polish, english]{babel}
+\RequirePackage{ifthen}
+\RequirePackage{xstring}
+
+\DeclareOption{eng}{\def\lang{eng}}
+\DeclareOption{pl}{\def\lang{pl}}
+\ExecuteOptions{eng} % Default to English if no option is given
+\ProcessOptions\relax
+
+\ifthenelse{\equal{\lang}{pl}}{
+  \selectlanguage{polish}
+}{
+  \selectlanguage{english}
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Page Layout Settings
@@ -21,7 +34,7 @@
   top=2cm,
   bottom=2.3cm,
   left=2cm,
-  right=2cm
+  right=2cm,
 }
 
 % Header and footer settings
@@ -43,12 +56,6 @@
 \newcommand{\supervisorfont}{\fontsize{12}{12}\selectfont\bfseries}
 \newcommand{\departmentfont}{\fontsize{11}{11}\selectfont\itshape}
 
-
-\pagestyle{fancy}
-\fancyhf{}
-\renewcommand{\headrulewidth}{0.5pt}
-\renewcommand{\footrulewidth}{0.5pt}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Header/Footer Dark Magic
 % I hate myself for this, but 
@@ -56,14 +63,33 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Manually set the font sizes for each word in the header and footer
-\fancyhead[C]{%
-  {\fontsize{11}{13}\selectfont D}{\fontsize{9}{11}\selectfont EPARTMENT} 
-  {\fontsize{9}{11}\selectfont OF}
-  {\fontsize{11}{13}\selectfont E}{\fontsize{9}{11}\selectfont LECTRONICS,}
-  {\fontsize{11}{13}\selectfont P}{\fontsize{9}{11}\selectfont HOTONICS,}
-  {\fontsize{11}{13}\selectfont A}{\fontsize{9}{11}\selectfont ND}
-  {\fontsize{11}{13}\selectfont M}{\fontsize{9}{11}\selectfont ICROSYSTEMS}
+\newcommand{\fancyheadtext}{%
+  \ifthenelse{\equal{\lang}{eng}}{%
+    \fancyhead[C]{%
+      {\fontsize{11}{13}\selectfont D}{\fontsize{9}{11}\selectfont EPARTMENT} 
+      {\fontsize{9}{11}\selectfont OF}
+      {\fontsize{11}{13}\selectfont E}{\fontsize{9}{11}\selectfont LECTRONICS,}
+      {\fontsize{11}{13}\selectfont P}{\fontsize{9}{11}\selectfont HOTONICS,}
+      {\fontsize{11}{13}\selectfont A}{\fontsize{9}{11}\selectfont ND}
+      {\fontsize{11}{13}\selectfont M}{\fontsize{9}{11}\selectfont ICROSYSTEMS}
+    }
+  }{%
+    \fancyhead[C]{%
+      {\fontsize{11}{13}\selectfont W}{\fontsize{9}{11}\selectfont YDZIAŁ}
+      {\fontsize{11}{13}\selectfont E}{\fontsize{9}{11}\selectfont LEKTRONIKI,}
+      {\fontsize{11}{13}\selectfont F}{\fontsize{9}{11}\selectfont OTONIKI I}
+      {\fontsize{11}{13}\selectfont M}{\fontsize{9}{11}\selectfont IKROSYSTEMÓW}
+    }
+  }
 }
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyheadtext
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+\setlength{\headheight}{25pt}
+\setlength{\headsep}{15pt}
 
 \fancyfoot[LE]{%
   \makebox[0pt][l]{%
@@ -132,22 +158,14 @@
   {\thesubsubsection.}{0.2x5em}{}
 
 % Adjust spacing for \section
-\titlespacing*{\section}
-{0pt} % left margin
-{10pt} % space before
-{10pt} % space after
+\titlespacing{\section}{0pt}{4pt}{4pt}
 
 % Adjust spacing for \subsection
-\titlespacing*{\subsection}
-{0pt} % left margin
-{1pt} % space before
-{1pt} % space after
+\titlespacing{\subsection}{0pt}{4pt}{4pt}
 
 % Adjust spacing for \subsubsection
-\titlespacing*{\subsubsection}
-{0pt} % left margin
-{1pt} % space before
-{1pt} % space after
+\titlespacing{\subsubsection}{0pt}{2pt}{2pt}
+
 
 \RequirePackage{amsmath}
 
@@ -175,14 +193,20 @@
 
 \renewcommand{\maketitle}{
  \noindent
+    \vspace{1.0cm}
     \begin{flushright}
         \textcolor{gray}{
             \fontsize{14}{14}\selectfont
-            \textls[100]{ROZDZIAŁ}  % Letter spacing (100 = 1 pt)
+           \ifthenelse{\equal{\lang}{eng}}{%
+              \textls[100]{CHAPTER}  % Letter spacing (100 = 1 pt)
+           }
+           {
+              \textls[100]{ROZDZIAŁ}  % Letter spacing (100 = 1 pt)
+           }
             \fontsize{24}{24}\selectfont 1  % Chapter is currently "1" as in the template, can be changed here
         }
     \end{flushright}
-    \vspace*{-1.25cm}
+    \vspace*{-0.95cm}
     \noindent\rule{\textwidth}{0.5pt}\\[0.15cm]  % Horizontal rule
     {\centering\LARGE\textbf{\@title}\par\vspace{0.15cm}}
     \noindent\rule{\textwidth}{0.5pt}\\[0.75cm]  % Horizontal rule
@@ -198,7 +222,7 @@
 % Ensure Lists are Single Spaced
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \RequirePackage{enumitem}
-\setlist{nosep, before={\vspace{0.5\baselineskip}}, after={\vspace{0.5\baselineskip}}}
+\setlist{nosep, before={\vspace{0.15\baselineskip}}, after={\vspace{0.15\baselineskip}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bilbiography Stuff
@@ -209,9 +233,16 @@
     backend=biber
 ]{biblatex}
 
-\DefineBibliographyStrings{english}{%
-  bibliography = {Literature},
-}
+  \ifthenelse{\equal{\lang}{eng}}{%
+    \DefineBibliographyStrings{english}{%
+      bibliography = {Literature},
+      }
+  }
+  {
+    \DefineBibliographyStrings{english}{%
+    bibliography = {Literatura},
+    }
+  }
 % URL package with color options
 \RequirePackage[colorlinks=true, urlcolor=blue]{hyperref}
 % Set URL font style
@@ -225,10 +256,8 @@
 \RequirePackage{afterpage}
 
 \AtBeginDocument{
-  \newgeometry{top=3.85cm, bottom=2.3cm, left=2cm, right=2cm}
   \thispagestyle{firstpage}
-  \afterpage{\restoregeometry}
-  \pagestyle{fancy}
+  \afterpage{\pagestyle{fancy}}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
