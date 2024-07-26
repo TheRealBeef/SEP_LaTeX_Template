@@ -1,4 +1,4 @@
-# SEP_LaTeX_Template
+# SEP LaTeX Template
 Template for SEP competition
 
 Mirrors the provided .docx template more closely than the alternatively provided LaTeX template located at https://www.overleaf.com/latex/templates/templatka-sep/dzpgkksrjwcj
