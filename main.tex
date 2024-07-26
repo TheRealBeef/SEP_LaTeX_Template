@@ -1,4 +1,6 @@
-\documentclass{sep}
+\documentclass[eng]{sep} % For English
+%\documentclass[pl]{sep} % For Polish
+
 \usepackage{lipsum} % For placeholder text
 \usepackage{graphicx}
 \usepackage{subcaption}
@@ -27,8 +29,8 @@
 \usepackage{hyperref}	
 \usepackage{caption}
 \usepackage{xurl}
-
-
+\usepackage{afterpage}
+\usepackage{setspace}
 
 
 \addbibresource{references.bib}
@@ -43,11 +45,13 @@
 \begin{document}
 
 \maketitle
+\begin{spacing}{1.125}
 
 \input{sections/abstract}
 \input{sections/templatesection}
 
 
+\end{spacing}
 \printbibliography
 
 \end{document}
